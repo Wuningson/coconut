@@ -1,0 +1,14 @@
+{
+  "name": "twitterbot",
+  "version": "0.0.0",
+  "private": true,
+  "scripts": {
+    "start": "nodemon app.js"
+  },
+  "dependencies": {
+    "express": "~4.16.1",
+    "mongoose": "^5.7.7",
+    "nodemon": "^1.19.4",
+    "twit": "^2.2.11"
+  }
+}
