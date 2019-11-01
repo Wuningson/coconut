@@ -25,23 +25,19 @@ const action =(res, username, lat, long)=>{
 router.post('/', (req, res)=> {
   const saved = req.body.saved;
   const lat = req.body.lat;
-  const long = req.body.long;
+  const lng = req.body.long;
   const username = req.body.username;
-  const time = 1000*3600;
-  const sendMia = setTimeout(action, time, res, username, lat, long);
-  sendMia()
+  const time = 1000*30;
+  const sendMia = setTimeout(action, time, res, username, lat, lng);
+  sendMia;
   if (saved){
     clearTimeout()
     axios.post('/survived', {username})
     .then(data => {
-      res.status(200).json({
-        message: `Update has been sent`
-      })
+      console.log(data);
     })
     .catch(err => {
-      res.status(500).json({
-        error: `${err} occured while processing your request`
-      })
+      console.log(err);
     })
   }
 });

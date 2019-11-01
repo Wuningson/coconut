@@ -6,8 +6,9 @@ const T = new Twit(config);
 
 router.post('/', (req, res)=> {
   const lat = req.body.lat;
-  const long = req.body.long;
-  T.post('statuses/update', {status: `@${username} is about to be picked up by SARS operatives at this location`, geo: {"type": "Point", "coordinates": [lat, long]}}, (err, data, response)=> {
+  const lng = req.body.long;
+  const username = req.body.username;
+  T.post('statuses/update', {status: `@${username} is about to be picked up by SARS operatives at this location`, geo: {"type": "Point", "coordinates": [lat, lng]}}, (err, data, response)=> {
     if (err){
       console.log(`Something went wrong ${err}`);
       res.status(500).json({
