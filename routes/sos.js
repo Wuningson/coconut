@@ -5,10 +5,9 @@ const config = require('../config/config');
 const T = new Twit(config);
 
 router.post('/', (req, res)=> {
-  const tweet = req.body.tweet;
   const lat = req.body.lat;
   const long = req.body.long;
-  T.post('statuses/update', {status: `@${username} is ${tweet}`, geo: {"type": "Point", "coordinates": [lat, long]}}, (err, data, response)=> {
+  T.post('statuses/update', {status: `@${username} is about to be picked up by SARS operatives at this location`, geo: {"type": "Point", "coordinates": [lat, long]}}, (err, data, response)=> {
     if (err){
       console.log(`Something went wrong ${err}`);
       res.status(500).json({
