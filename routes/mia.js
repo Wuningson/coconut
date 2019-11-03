@@ -3,11 +3,11 @@ const router = express.Router();
 const Twit = require('twit');
 const config = require('../config/config');
 const T = new Twit(config);
-const axios = require('axios').default;
+const postSurvived = require('./survivedBeforeHour');
 
 
-const action =(res, username, lat, long)=>{
-  T.post('statuses/update', {status: `@${username} has not sent any update in the last hour, last location is shared below`, geo: {"type": "Point", "coordinates": [lat, long]}}, (err, data, response)=> {
+const action =(res, username)=>{
+  T.post('statuses/update', {status: `@${username} has not sent any update in the last hour, last location is shared below`}, (err, data, response)=> {
     if (err){
       console.log(`Something went wrong ${err}`);
       res.status(500).json({
@@ -27,18 +27,12 @@ router.post('/', (req, res)=> {
   const lat = req.body.lat;
   const lng = req.body.long;
   const username = req.body.username;
-  const time = 1000*30;
-  const sendMia = setTimeout(action, time, res, username, lat, lng);
+  const time = 1000*3600;
+  const sendMia = setTimeout(action, time, res, username);
   sendMia;
   if (saved){
-    clearTimeout()
-    axios.post('/survived', {username})
-    .then(data => {
-      console.log(data);
-    })
-    .catch(err => {
-      console.log(err);
-    })
+    clearTimeout(sendMia);
+    postSurvived(username, req, res);
   }
 });
 
