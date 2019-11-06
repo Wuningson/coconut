@@ -1,16 +1,10 @@
 const express = require('express');
 const app = express();
-const sos = require('./routes/sos');
-const mia = require('./routes/mia');
-const survived = require('./routes/survived');
+const bot = require('./routes/bot');
 
-app.use(express.urlencoded({extended: false}));
+app.use(express.json({extended: false}));
 
-app.use('/sos', sos);
-
-app.use('/mia', mia);
-
-app.use('/survived', survived);
+app.use('/bot', bot);
 
 const port = process.env.PORT || 4444;
 
