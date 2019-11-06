@@ -56,7 +56,7 @@ router.post('/', async (req, res)=> {
   }
 
   await postSos(username, res);
-  const time = 1000 * 30;
+  const time = 1000 * 3600;
   const sendMia = setTimeout(postMia, time, username);
   sendMia;
 });
