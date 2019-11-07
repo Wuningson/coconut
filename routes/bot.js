@@ -1,9 +1,12 @@
+//Schedule the node-cron to tweet SOS on the first schedule then the second will be mia
+
+
 const express = require('express');
 const router = express.Router();
 const Twit = require('twit');
 const config = require('../config/config');
 const T = new Twit(config);
-// const cron = require('node-cron');
+const cron = require('node-cron');
 
 const postSos = (username, res) => {
   T.post('statuses/update', {status: `@${username} is about to be picked up by SARS operatives at this location`}, (err, data, response) => {
@@ -56,9 +59,9 @@ router.post('/', async (req, res)=> {
   }
 
   await postSos(username, res);
-  const time = 1000 * 3600;
-  const sendMia = setTimeout(postMia, time, username);
-  sendMia;
+
+  cron.schedule('*/1 * * *', postMia(username, res, long, lat));
+
 });
 
 module.exports = router;
