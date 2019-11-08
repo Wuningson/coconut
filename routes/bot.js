@@ -1,12 +1,8 @@
-//Schedule the node-cron to tweet SOS on the first schedule then the second will be mia
-
-
 const express = require('express');
 const router = express.Router();
 const Twit = require('twit');
 const config = require('../config/config');
 const T = new Twit(config);
-const cron = require('node-cron');
 
 const postSos = (username, res) => {
   T.post('statuses/update', {status: `@${username} is about to be picked up by SARS operatives at this location`}, (err, data, response) => {
@@ -34,16 +30,10 @@ const postMia = (username, res) => {
 const postSurvived = (username, res) => {
   T.post('statuses/update', {status: `@${username} has survived SARS`}, (err, data, response) => {
     if (err){ 
-      // res.status(500).json({
-      //   message: `Status update failed`
-      // })
       console.log(`Status update failed ${err}`);
       process.exit(1);
     }
     else{
-      // res.status(201).json({
-      //   message: `Status update sent`
-      // }) 
       console.log(`${data}`);
       process.exit(0);
     }
@@ -52,7 +42,7 @@ const postSurvived = (username, res) => {
 
 
 router.post('/', async (req, res)=> {
-  const { username, saved } = req.body;
+  const { username, saved, long, lat } = req.body;
 
   if (saved === "true"){
     await postSurvived(username, res);
@@ -60,7 +50,9 @@ router.post('/', async (req, res)=> {
 
   await postSos(username, res);
 
-  cron.schedule('*/1 * * *', postMia(username, res, long, lat));
+  const time = 1000 * 3600;
+  const sendMia = setTimeout(postMia, time, username);
+  sendMia;
 
 });
 
