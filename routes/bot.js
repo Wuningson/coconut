@@ -4,8 +4,8 @@ const Twit = require('twit');
 const config = require('../config/config');
 const T = new Twit(config);
 
-const postSos = (username, res) => {
-  T.post('statuses/update', {status: `@${username} is about to be picked up by SARS operatives at this location`}, (err, data, response) => {
+const postSos = (username, res, long, lat) => {
+  T.post('statuses/update', {status: `@${username} is about to be picked up by SARS operatives at this location`}, {"geo": { "type":"Point", "coordinates":[lat, long] }}, (err, data, response) => {
     if (err){
       res.status(500).json({
         message: `An error occurred while sending your update, ${err}`
@@ -20,8 +20,8 @@ const postSos = (username, res) => {
 }
 
 
-const postMia = (username, res) => {
-  T.post('statuses/update', {status: `@${username} has not sent any update in the last hour, last location is shared below`}, (err, data, response) => {
+const postMia = (username, res, long, lat) => {
+  T.post('statuses/update', {status: `@${username} has not sent any update in the last hour, last location is shared below`}, {"geo": { "type":"Point", "coordinates":[lat, long] }}, (err, data, response) => {
     if (err) console.log(`Status update failed ${err}`);
     else console.log(`Success`);
   });
@@ -42,16 +42,18 @@ const postSurvived = (username, res) => {
 
 
 router.post('/', async (req, res)=> {
-  const { username, saved, long, lat } = req.body;
+  const { username, saved, long, lat, access_token, access_token_secret } = req.body;
+  config.access_token = access_token;
+  config.access_token_secret = access_token_secret;
 
   if (saved === "true"){
     await postSurvived(username, res);
   }
 
-  await postSos(username, res);
+  await postSos(username, res, long, lat);
 
   const time = 1000 * 3600;
-  const sendMia = setTimeout(postMia, time, username);
+  const sendMia = setTimeout(postMia, time, username, long, lat);
   sendMia;
 
 });
