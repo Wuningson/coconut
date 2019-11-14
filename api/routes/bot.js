@@ -86,9 +86,9 @@ const postSurvived = async (username, res) => {
 
 
 router.post('/', async (req, res)=> {
-  const { username, saved, access_token, access_token_secret } = req.body;
-  if (access_token) token.access_token = access_token;
-  if (access_token_secret) token.access_token_secret = access_token_secret;
+  const { username, saved, token, secret_Key } = req.body;
+  if (token) token.token = token;
+  if (secret_Key) token.secret_Key = secret_Key;
 
   if (saved === "true"){
     await postSurvived(username, res);
