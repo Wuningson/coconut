@@ -1,10 +1,16 @@
 const express = require('express');
 const app = express();
-const bot = require('./routes/bot');
+const bot = require('./api/routes/bot');
+const Db = require('./api/config/database');
+const updates = require('./api/routes/updates');
+
+Db();
 
 app.use(express.json({extended: false}));
 
 app.use('/bot', bot);
+
+app.use('/updates', updates);
 
 const port = process.env.PORT || 4444;
 
