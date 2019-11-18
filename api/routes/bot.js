@@ -1,16 +1,16 @@
 const express = require('express');
 const router = express.Router();
 const Twit = require('twit');
-const token = require('../config/token');
+const token = require('../../config/token');
 const T = new Twit(token);
 const Updates = require('../models/Updates');
 const getCurrentDateTime = require('./utils');
+const checkAuth = require('../middleware/checkAuth');
 
-const time = getCurrentDateTime()
-const tweet = ` is about to be picked up by SARS operatives at this location on ${time}`;
 
 const postSos = (username, res) => {
-  T.post('statuses/update', {status: `@${username} ${tweet}`}, (err, data, response) => {
+  const time = getCurrentDateTime()
+  T.post('statuses/update', {status: `@${username} is about to be picked up by SARS operatives at this location on ${time}`}, (err, data, response) => {
     if (err){
       console.log(err);
       res.status(500).json({
@@ -20,14 +20,14 @@ const postSos = (username, res) => {
     }else{
       console.log(`Status update sent successfully`);
       const status = "SOS";
-      const time = data.created_at;
+      const createdTime = time;
       const displayName = data.user.name;
-      console.log(`status is ${status}, time created is ${time}, displayName is ${displayName}`)
+      console.log(`status is ${status}, time created is ${createdTime}, displayName is ${displayName}`)
       const update = new Updates({
         username,
         displayName,
         status,
-        time
+        time : createdTime,
       });
       update.save().then(doc => console.log(doc)).catch(err => console.log(err));
       res.status(200).json({
@@ -39,7 +39,8 @@ const postSos = (username, res) => {
 
 
 const postMia = (username, res) => {
-  T.post('statuses/update', {status: `@${username} has not sent any update in the last hour, last location is shared below on ${time}`}, (err, data, response) => {
+  const time = getCurrentDateTime()
+  T.post('statuses/update', {status: `@${username} has not sent any update in the last hour, ${time}`}, (err, data, response) => {
     if (err) console.log(`Status update failed ${err}`);
     else {
       Updates.findOne({username}).then(user => {
@@ -53,6 +54,7 @@ const postMia = (username, res) => {
 }
 
 const postSurvived = async (username, res) => {
+  const time = getCurrentDateTime()
   T.post('statuses/update', {status: `@${username} has survived SARS on ${time}`}, (err, data, response) => {
     if (err){ 
       console.log(`Status update failed ${err}`);
@@ -85,20 +87,16 @@ const postSurvived = async (username, res) => {
 }
 
 
-router.post('/', async (req, res)=> {
-  const { username, saved, token, secret_Key } = req.body;
-  if (token) token.token = token;
-  if (secret_Key) token.secret_Key = secret_Key;
-
-  if (saved === "true"){
-    await postSurvived(username, res);
-  }
-  else{
-    await postSos(username, res);
-    const time = 1000 * 3600;
-    const sendMia = setTimeout(postMia, time, username);
-    sendMia;
-  }
+router.post('/', checkAuth, async (req, res)=> {
+  const { username, saved } = req.body;
+    if (saved == "true"){
+      await postSurvived(username, res);
+    }else{
+      await postSos(username, res);
+      const setTime = 1000 * 3600;
+      const sendMia = setTimeout(postMia, setTime, username);
+      sendMia;
+    }
 });
 
 module.exports = router;

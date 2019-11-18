@@ -1,7 +1,7 @@
 const express = require('express');
 const app = express();
 const bot = require('./api/routes/bot');
-const Db = require('./api/config/database');
+const Db = require('./config/database');
 const updates = require('./api/routes/updates');
 
 Db();
