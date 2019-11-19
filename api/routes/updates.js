@@ -1,8 +1,9 @@
 const express = require('express');
 const router = express.Router();
 const Updates = require('../models/Updates');
+const checkAuth = require('../middleware/checkAuth');
 
-router.get('/sos', (req, res) => {
+router.get('/sos', checkAuth, (req, res) => {
   Updates.find({ status : "SOS" })
   .then(doc => {
     res.status(200).json({
@@ -16,7 +17,7 @@ router.get('/sos', (req, res) => {
   })
 })
 
-router.get('/survived', (req, res) => {
+router.get('/survived', checkAuth, (req, res) => {
   Updates.find({ status : "SURVIVED" })
   .then(doc => {
     res.status(200).json({
@@ -31,7 +32,7 @@ router.get('/survived', (req, res) => {
 })
 
 
-router.get('/mia', (req, res) => {
+router.get('/mia', checkAuth, (req, res) => {
   Updates.find({ status : "MIA" })
   .then(doc => {
     res.status(200).json({
