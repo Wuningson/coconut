@@ -1,14 +1,13 @@
 const express = require('express');
 const router = express.Router();
 const Twit = require('twit');
-const token = require('../../config/token');
-const T = new Twit(token);
 const Updates = require('../models/Updates');
 const getCurrentDateTime = require('./utils');
 const checkAuth = require('../middleware/checkAuth');
+const User = require('../models/User');
 
 
-const postSos = (username, res) => {
+const postSos = (username, res, T) => {
   const time = getCurrentDateTime()
   T.post('statuses/update', {status: `@${username} is about to be picked up by SARS operatives at this location on ${time}`}, (err, data, response) => {
     if (err){
@@ -38,7 +37,7 @@ const postSos = (username, res) => {
 }
 
 
-const postMia = (username, res) => {
+const postMia = (username, T) => {
   const time = getCurrentDateTime()
   T.post('statuses/update', {status: `@${username} has not sent any update in the last hour, ${time}`}, (err, data, response) => {
     if (err) console.log(`Status update failed ${err}`);
@@ -53,7 +52,8 @@ const postMia = (username, res) => {
   });
 }
 
-const postSurvived = async (username, res) => {
+
+const postSurvived = async (username, res, T) => {
   const time = getCurrentDateTime()
   T.post('statuses/update', {status: `@${username} has survived SARS on ${time}`}, (err, data, response) => {
     if (err){ 
@@ -88,15 +88,28 @@ const postSurvived = async (username, res) => {
 
 
 router.post('/', checkAuth, async (req, res)=> {
+  const token = require('../../config/token');
   const { username, saved } = req.body;
+
+  User.findOne({username}).then(async user => {
+    token.access_token = user.access_token;
+    token.access_token_secret = user.access_token_secret;
+
+    const T = new Twit(token);
+  
     if (saved == "true"){
-      await postSurvived(username, res);
+      await postSurvived(username, res, T);
     }else{
-      await postSos(username, res);
-      const setTime = 1000 * 3600;
-      const sendMia = setTimeout(postMia, setTime, username);
+      await postSos(username, res, T);
+      const setTime = 1000 * 36;
+      const sendMia = setTimeout(postMia, setTime, username, T);
       sendMia;
     }
+  }).catch(err => {
+    res.status(404).json({
+      error: `User does not exist ${err}`
+    });
+  });
 });
 
 module.exports = router;
