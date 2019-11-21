@@ -101,7 +101,7 @@ router.post('/', async (req, res)=> {
       await postSurvived(username, res, T);
     }else{
       await postSos(username, res, T);
-      const setTime = 1000 * 36;
+      const setTime = 1000 * 3600;
       const sendMia = setTimeout(postMia, setTime, username, T);
       sendMia;
     }
