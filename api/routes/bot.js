@@ -46,6 +46,7 @@ const postMia = (username, T) => {
     if (err) console.log(`Status update failed ${err}`);
     else {
       Updates.findOne({username}).then(user => {
+        console.log(`User found`);
         user.status = "MIA";
         user.save().then(doc => console.log(`Status Update sent and data update successful`)).catch(err => `User data update failed. Error occurred ${err}`)
       }).catch(err => {
@@ -77,7 +78,7 @@ const postSurvived = async (username, res, T) => {
           console.log(`User data update failed. Error occurred ${err}`)
           res.status(500).json({
             error: `An error {err} occurred`
-          })
+          });
         })
       }).catch(err => {
         res.status(400).json({
@@ -95,6 +96,7 @@ router.post('/', async (req, res)=> {
   const { username, saved } = req.body;
 
   User.findOne({username}).then(async user => {
+    console.log(`User found`);
     token.access_token = user.access_token;
     token.access_token_secret = user.access_token_secret;
 
@@ -109,6 +111,7 @@ router.post('/', async (req, res)=> {
       sendMia;
     }
   }).catch(err => {
+    console.log(`User does not exist ${err}`);
     res.status(404).json({
       error: `User does not exist ${err}`
     });

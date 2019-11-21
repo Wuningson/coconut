@@ -8,6 +8,7 @@ router.post('/', (req, res) => {
   User.find({username})
   .then(doc => {
     if (doc.length >= 1){
+      console.log(`User exists`)
       res.status(409).json({
         message: 'User data already exists'
       });
@@ -17,16 +18,19 @@ router.post('/', (req, res) => {
         access_token,
         access_token_secret
       });
+      console.log(`User data created`)
       user.save()
       .then(saved => {
         res.status(201).json({
           message: `User data stored successfully`
         })
+        console.log(`User data stored successfully`)
       })
       .catch(err => {
         res.status(500).json({
           error: `An error ${err} occurred`
         });
+        console.log(`An error occurred ${err}, User data not stored`);
       });
     }
   })
@@ -34,6 +38,7 @@ router.post('/', (req, res) => {
     res.status(500).json({
       error: err
     });
+    console.log(`An error ${err} occurred, `);
   });
 });
 
