@@ -28,6 +28,4 @@ const getCurrentDateTime = () => {
   return currentDateTime
 }
 
-// module.exports = getCurrentDateTime;
-
-console.log(getCurrentDateTime())
+module.exports = getCurrentDateTime;

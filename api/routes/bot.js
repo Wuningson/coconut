@@ -5,6 +5,9 @@ const Updates = require('../models/Updates');
 const getCurrentDateTime = require('./utils');
 const checkAuth = require('../middleware/checkAuth');
 const User = require('../models/User');
+const Coordinates = require('coordinate-parser');
+
+const position = new Coordinates('38.8977, 77.0365');
 
 
 const postSos = (username, res, T) => {
@@ -113,3 +116,4 @@ router.post('/', async (req, res)=> {
 });
 
 module.exports = router;
+
