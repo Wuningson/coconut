@@ -9,7 +9,7 @@ const User = require('../models/User');
 
 const postSos = (username, res, T) => {
   const time = getCurrentDateTime()
-  T.post('statuses/update', {status: `@${username} is about to be picked up by SARS operatives at this location on ${time}`}, (err, data, response) => {
+  T.post('statuses/update', {status: `@${username} is about to be picked up by SARS operatives on ${time}`}, (err, data, response) => {
     if (err){
       console.log(err);
       res.status(500).json({
