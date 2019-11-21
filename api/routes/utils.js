@@ -10,6 +10,8 @@
 
   let meridian = hours < 12 ? 'A.M.' : 'P.M.'
 
+  if(hours>12) hours = hours%12;
+
   const currentDateTime =
     currentDate.getDate() +
     '/' +
@@ -27,4 +29,3 @@
 }
 
 module.exports = getCurrentDateTime;
-
