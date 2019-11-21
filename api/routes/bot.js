@@ -87,7 +87,7 @@ const postSurvived = async (username, res, T) => {
 }
 
 
-router.post('/', checkAuth, async (req, res)=> {
+router.post('/', async (req, res)=> {
   const token = require('../../config/token');
   const { username, saved } = req.body;
 

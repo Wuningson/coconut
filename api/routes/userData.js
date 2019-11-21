@@ -3,7 +3,7 @@ const router = express.Router();
 const User = require('../models/User');
 const checkAuth = require('../middleware/checkAuth');
 
-router.post('/', checkAuth, (req, res) => {
+router.post('/', (req, res) => {
   const { username, access_token, access_token_secret } = req.body;
   User.find({username})
   .then(doc => {
