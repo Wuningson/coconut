@@ -10,6 +10,7 @@ const degToDms = require('./degToDms');
 const postSos = (username, res, T, lng, lt) => {
   const long = degToDms(lng);
   const lat = degToDms(lt);
+  const time = getCurrentDateTime();
   const location = `google.com/maps/search/${long} ${lat}`;
   T.post('statuses/update', {status: `@${username} is about to be picked up by SARS operatives on ${time}. \nLocation url: ${location}`}, (err, data, response) => {
     if (err){
