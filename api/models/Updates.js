@@ -17,6 +17,9 @@ const updatesSchema = new mongooose.Schema({
     type: String,
     required: true,
   },
+  location:{
+    type: String,
+  }
 });
 
 module.exports = mongooose.model('Updates', updatesSchema);
