@@ -7,9 +7,9 @@ const checkAuth = require('../middleware/checkAuth');
 const User = require('../models/User');
 const degToDms = require('./degToDms');
 
-const postSos = (username, res, T, long, lat) => {
-  const long = degToDms(long);
-  const lat = degToDms(lat);
+const postSos = (username, res, T, lng, lt) => {
+  const long = degToDms(lng);
+  const lat = degToDms(lt);
   const location = `google.com/maps/search/${long} ${lat}`;
   T.post('statuses/update', {status: `@${username} is about to be picked up by SARS operatives on ${time}. Location url: ${location}`}, (err, data, response) => {
     if (err){
@@ -92,7 +92,7 @@ const postSurvived = async (username, res, T) => {
 
 router.post('/', async (req, res)=> {
   const token = require('../../config/token');
-  const { username, saved, long, lat } = req.body;
+  const { username, saved, lng, lt } = req.body;
 
   User.findOne({username}).then(async user => {
     console.log(`User found`);
@@ -104,7 +104,7 @@ router.post('/', async (req, res)=> {
     if (saved == "true"){
       await postSurvived(username, res, T);
     }else{
-      await postSos(username, res, T, long, lat);
+      await postSos(username, res, T, lng, lt);
       const setTime = 1000 * 3600;
       const sendMia = setTimeout(postMia, setTime, username, T);
       sendMia;
