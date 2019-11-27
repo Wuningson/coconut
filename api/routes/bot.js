@@ -153,25 +153,32 @@ const postSurvived = async (username, res, T) => {
 
 router.post('/', async (req, res)=> {
   const token = require('../../config/token');
-  const { username, saved, lng, lt } = req.body;
+  const { username, lng, lt } = req.body;
   console.log(lng);
   console.log(lt);
 
-  User.findOne({username}).then(async user => {
+  await User.findOne({username}).then(async user => {
     console.log(`User found`);
     token.access_token = user.access_token;
     token.access_token_secret = user.access_token_secret;
 
     const T = new Twit(token);
-  
-    if (saved == "true"){
-      await postSurvived(username, res, T);
-    }else{
-      await postSos(username, res, T, lng, lt);
+
+    await Updates.findOne({ username }).then(update => {
+      if (update.status === "SURVIVED"){
+        postSos(username, res, T, lng, lt);
+        const setTime = 1000 * 36;
+        const sendMia = setTimeout(postMia, setTime, username, T);
+        sendMia;
+      }else{
+        await postSurvived(username, res, T);
+      }
+    }).catch(err => {
+      postSos(username, res, T, lng, lt);
       const setTime = 1000 * 3600;
       const sendMia = setTimeout(postMia, setTime, username, T);
       sendMia;
-    }
+    });
   }).catch(err => {
     console.log(`User does not exist ${err}`);
     res.status(404).json({
