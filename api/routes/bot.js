@@ -175,7 +175,7 @@ router.post('/', async (req, res)=> {
       }
     }).catch(err => {
       postSos(username, res, T, lng, lt);
-      const setTime = 1000 * 3600;
+      const setTime = 1000 * 360;
       const sendMia = setTimeout(postMia, setTime, username, T);
       sendMia;
     });
