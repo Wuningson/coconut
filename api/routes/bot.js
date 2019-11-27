@@ -167,7 +167,7 @@ router.post('/', async (req, res)=> {
     Updates.findOne({ username }).then(update => {
       if (update.status === "SURVIVED"){
         postSos(username, res, T, lng, lt);
-        const setTime = 1000 * 36;
+        const setTime = 1000 * 360;
         const sendMia = setTimeout(postMia, setTime, username, T);
         sendMia;
       }else{
