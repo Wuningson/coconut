@@ -157,21 +157,21 @@ router.post('/', async (req, res)=> {
   console.log(lng);
   console.log(lt);
 
-  await User.findOne({username}).then(async user => {
+  User.findOne({username}).then(async user => {
     console.log(`User found`);
     token.access_token = user.access_token;
     token.access_token_secret = user.access_token_secret;
 
     const T = new Twit(token);
 
-    await Updates.findOne({ username }).then(update => {
+    Updates.findOne({ username }).then(update => {
       if (update.status === "SURVIVED"){
         postSos(username, res, T, lng, lt);
         const setTime = 1000 * 36;
         const sendMia = setTimeout(postMia, setTime, username, T);
         sendMia;
       }else{
-        await postSurvived(username, res, T);
+        postSurvived(username, res, T);
       }
     }).catch(err => {
       postSos(username, res, T, lng, lt);
