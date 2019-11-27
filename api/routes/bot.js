@@ -95,19 +95,23 @@ const postMia = async (username, T) => {
   Updates.findOne({username})
   .then(update => {
     console.log(`Update found`);
-    const time = getCurrentDateTime()
-    T.post('statuses/update', {status: `@${username} has not sent any update in the last hour, ${time}. \nLast known location URL: ${update.location}`}, (err, data, response) => {
-      if (err) console.log(`Status update failed ${err}`);
-      else{
-        update.status = "MIA";
-        update.save()
-        .then(doc => {
-          console.log(`Status Update sent and data update successful`)
-          storeHistory(History, doc.username, doc.location, doc.status, doc.time);
-        })
-        .catch(err => `User data update failed. Error occurred ${err}`);
-      }
-    })
+    if (update.status !== "SURVIVED"){
+      const time = getCurrentDateTime()
+      T.post('statuses/update', {status: `@${username} has not sent any update in the last hour, ${time}. \nLast known location URL: ${update.location}`}, (err, data, response) => {
+        if (err) console.log(`Status update failed ${err}`);
+        else{
+          update.status = "MIA";
+          update.save()
+          .then(doc => {
+            console.log(`Status Update sent and data update successful`)
+            storeHistory(History, doc.username, doc.location, doc.status, doc.time);
+          })
+          .catch(err => `User data update failed. Error occurred ${err}`);
+        }
+      })
+    }else{
+      console.log(`User has survived already`);
+    }
     })
     .catch(err => {
     console.log(`User not found`);
